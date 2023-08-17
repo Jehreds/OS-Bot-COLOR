@@ -3,10 +3,8 @@ import webbrowser as wb
 
 import customtkinter
 from PIL import Image, ImageTk
-
-from view.fonts.fonts import *
 from view.sprite_scraper_view import SpriteScraperView
-
+from view.bcd2_view import bcd2view
 
 class TitleView(customtkinter.CTkFrame):
     def __init__(self, parent, main):
@@ -31,12 +29,12 @@ class TitleView(customtkinter.CTkFrame):
             Image.open(f"{self.logo_path}/images/ui/logo.png").resize((411, 64)),
             Image.ANTIALIAS,
         )
-        self.label_logo = customtkinter.CTkLabel(self, image=self.logo, text="", font=body_med_font())
+        self.label_logo = customtkinter.CTkLabel(self, image=self.logo)
         self.label_logo.grid(row=1, column=0, columnspan=3, sticky="nsew", padx=15, pady=15)
 
         # Description label
-        self.note = "Select a game in the left-side menu to begin."
-        self.label_note = customtkinter.CTkLabel(master=self, text=self.note, font=subheading_font())
+        self.note = "The universal OSRS color bot.\n Select a game in the left-side menu to begin."
+        self.label_note = customtkinter.CTkLabel(master=self, text=self.note, text_font=("Roboto", 14))
         self.label_note.bind(
             "<Configure>",
             lambda e: self.label_note.configure(wraplength=self.label_note.winfo_width() - 20),
@@ -55,7 +53,6 @@ class TitleView(customtkinter.CTkFrame):
         self.btn_github = customtkinter.CTkButton(
             master=self,
             text="GitHub",
-            font=button_med_font(),
             image=self.github_logo,
             width=BTN_WIDTH,
             height=BTN_HEIGHT,
@@ -74,7 +71,6 @@ class TitleView(customtkinter.CTkFrame):
         self.btn_feedback = customtkinter.CTkButton(
             master=self,
             text="Feedback",
-            font=button_med_font(),
             image=self.feedback_logo,
             width=BTN_WIDTH,
             height=BTN_HEIGHT,
@@ -93,7 +89,6 @@ class TitleView(customtkinter.CTkFrame):
         self.btn_feedback = customtkinter.CTkButton(
             master=self,
             text="Report Bug",
-            font=button_med_font(),
             image=self.bug_logo,
             width=BTN_WIDTH,
             height=BTN_HEIGHT,
@@ -113,7 +108,6 @@ class TitleView(customtkinter.CTkFrame):
         self.btn_sprite_scraper = customtkinter.CTkButton(
             master=self,
             text="Scraper",
-            font=button_med_font(),
             image=self.scraper_logo,
             width=BTN_WIDTH,
             height=BTN_HEIGHT,
@@ -123,6 +117,25 @@ class TitleView(customtkinter.CTkFrame):
             command=self.btn_scraper_clicked,
         )
         self.btn_sprite_scraper.grid(row=4, column=1, padx=15, pady=(15, 0))
+        
+          # -- BCD 2.0 Tools
+        self.BCD_logo = ImageTk.PhotoImage(
+            Image.open(f"{self.logo_path}/images/ui/BCD.png").resize((IMG_SIZE, IMG_SIZE)),
+            Image.LANCZOS,
+        )
+        self.btn_BCD = customtkinter.CTkButton(
+            master=self,
+            text="BCD 2.0",
+            image=self.BCD_logo,
+            width=BTN_WIDTH,
+            height=BTN_HEIGHT,
+            corner_radius=15,
+            fg_color=DEFAULT_GRAY,
+            compound="top",
+            command=self.btn_BCD_clicked,
+        )
+        self.btn_BCD.grid(row=4, column=0, padx=15, pady=(15, 0),sticky="e")
+                 
 
     def btn_github_clicked(self):
         wb.open_new_tab("https://github.com/kelltom/OSRS-Bot-COLOR")
@@ -139,4 +152,11 @@ class TitleView(customtkinter.CTkFrame):
         window.title("OSRS Wiki Sprite Scraper")
         view = SpriteScraperView(parent=window)
         view.pack(side="top", fill="both", expand=True, padx=20, pady=20)
-        window.after(100, window.lift)  # Workaround for bug where main window takes focus
+    
+    def btn_BCD_clicked(self):
+        window = customtkinter.CTkToplevel(master=self)
+        window.geometry("1000x1000")
+        window.title("BCD 2.0 Tools")
+        view = bcd2view(parent=window)
+        view.pack(side="top", fill="both", expand=True, padx=20, pady=20)
+        

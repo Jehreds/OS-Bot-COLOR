@@ -25,6 +25,8 @@ import utilities.runelite_cv as rcv
 from model.bot import Bot, BotStatus
 from utilities.geometry import Point, Rectangle, RuneLiteObject
 from utilities.window import Window
+import utilities.BetterColorDetection as bcd
+import utilities.extract_contours as ec
 
 
 class RuneLiteWindow(Window):
@@ -73,6 +75,7 @@ class RuneLiteWindow(Window):
             width=bar_w,
             height=bar_h,
         )
+        
 
     # Override
     def resize(self, width: int = 773, height: int = 534) -> None:
@@ -223,6 +226,30 @@ class RuneLiteBot(Bot, metaclass=ABCMeta):
             obj.set_rectangle_reference(rect)
         return objs
 
+  
+    def find_color(self, rect: Rectangle, color) -> List[RuneLiteObject]:
+        """
+        Finds all contours on screen of a particular color and returns a list of Shapes.
+        Args:
+            rect: A reference to the Rectangle that this shape belongs in (E.g., Bot.win.control_panel).
+            color: the color to search for in the BetterColorDetection.py file passed as a string ie "orange"
+        Returns:
+            A list of RuneLiteObjects or empty list if none found.
+        """
+        img_rect = rect.screenshot()
+        
+        isolated_colors = bcd.detect_color(img_rect, color)
+        objs = ec.extract_contours(isolated_colors)
+        for obj in objs:
+            obj.set_rectangle_reference(rect)
+        return objs
+    
+    def bot_view(self, rect:Rectangle):
+        img_rect = rect.screenshot()
+        return img_rect
+        
+
+        
     def get_nearest_tag(self, color: clr.Color) -> RuneLiteObject:
         """
         Finds the nearest outlined object of a particular color within the game view and returns it as a RuneLiteObject.
